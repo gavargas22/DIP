@@ -21,7 +21,7 @@ x %just prints x to the display so that we can see it
 if x == 0
 %this checks if x is exactly equal to 0
 %it does not set x equal to 0
-	disp( ‘This number is exactly 0!’ )
+	disp( 'This number is exactly 0' )
 	%prints a message to the screen
 	y = x + 10 ; %we can do something random here
 
@@ -31,21 +31,21 @@ elseif x > 0 && x < 5
 %and logical operators (AND in this case)
 %OR would be written:||
 %==, >, <, >=, <= are all valid relational operators
-	disp( ‘This number is smaller than 5 (but not 0)!’ )
+	disp( 'This number is smaller than 5 (but not 0)!' )
 	y = x .* exp( i .* pi ) ; %exponentials… too easy!
 
 elseif x == 5 %checks if x is exactly equal to 5
-	disp( ‘This number is exactly 5!’ )
+	disp( 'This number is exactly 5' )
 	y = sqrt( x ) ; %square root… why not?
 
 elseif x > 5 %checks if x is greater than 5
-	disp( ‘This number is greater than 5!’ )
+	disp( 'This number is greater than 5' )
 	y = ( ( 2 .* x ) .^ 2 ) + x ; %quadratic… yawn
 
 else
 %I’m not sure what other case there can be…
 %but this covers the unexpected!
-	disp( ‘I should never get here… but here I am! ‘ )
+	disp( 'I should never get here but here I am!' )
 	y = 1e6 ;
 	%say this number with your pinky to your mouth
 
