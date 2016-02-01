@@ -1,8 +1,8 @@
 ENVI
 description = {
   File Imported into ENVI.}
-samples = 101
-lines   = 101
+samples = 1400
+lines   = 1400
 bands   = 1
 header offset = 0
 file type = ENVI Standard
