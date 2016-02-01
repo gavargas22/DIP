@@ -1,4 +1,4 @@
-function result = image_testing(output_filename) 
+function result = image_mean_testing(output_filename) 
 % Open up the image
 file_id = fopen('test\test.img', 'r', 'l');
 image_subset = fread(file_id, [1400, 1400], 'uint8');
@@ -33,7 +33,7 @@ end
 
 figure(1);
 hold off;
-imagesc(new_image_data_matrix);
+imagesc(new_image_data_matrix');
 fclose(file_id);
 axis image;
 title('Test Image');
