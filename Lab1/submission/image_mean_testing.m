@@ -7,7 +7,6 @@ image_subset = fread(file_id, [1400, 1400], 'uint8');
 % Mean of pixel values
 mean = floor(sum(sum(image_subset))/numel(image_subset));
 
-
 % Go through each pixel on the image and calculate whether the brightness
 % value at that location is greater than equal to or less than the mean
 % obtained above.
@@ -45,11 +44,11 @@ hold on;
 
 to_write_file_id = fopen([output_filename '.img'], 'wb');
 % Finally just write the data.
-fwrite(to_write_file_id, new_image_data_matrix, 'int16');
+fwrite(to_write_file_id, new_image_data_matrix', 'int16');
 % Finish up by closing the file, ready for use.
 fclose(to_write_file_id);
 % Display useful message for header opening in ENVI
-disp(['To open file in ENVI, select BIP, samples = 1400, lines = 1400 and integer.']);
+disp('To open file in ENVI, select BIP, samples = 1400, lines = 1400 and integer.');
 
 
 end
