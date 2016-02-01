@@ -6,12 +6,11 @@
 % the median is the average of the two middle values
 
 function median_output = median_calculation(x)
+    median_output = 0;
     % Firstly sort the values in the 1x1 array given to start work.
     sorted_values = sort(x);
     % Save size of array for future use.
     array_length = length(x);
-    % Add all the values in the array given for future use.
-    check_sum = sum(sorted_values);
     % Check if the array has an even or odd number of values by taking the modulus divided by two.
     parity = mod(length(sorted_values), 2);
     % Start the process of getting the median.
