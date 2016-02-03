@@ -1,10 +1,12 @@
+% Guillermo Vargas
+
 % A function that takes in two arguments, the name of the image and the
 % size of the desired subset. In the case of this image, its just 1400x1400
 % comment line 6 if it is desired to give a specific size.
 
-function image_display = simple_image_display()
-    width = 1400; height = 1400;
-    file_id = fopen('test\test.img', 'r', 'l');
+function image_display = simple_image_display(file, width, height)
+%     width = 1400; height = 1400;
+    file_id = fopen(file, 'r', 'l');
     image_subset = fread(file_id, [width, height], 'uint8');
     figure(1);
     hold off;

@@ -1,3 +1,5 @@
+% Guillermo Vargas
+
 % To run this function you have to give the size desired for the output
 % image as well as the name desired for the output file, that argument
 % should be given in '' since it is a string. In the lab's example we get a

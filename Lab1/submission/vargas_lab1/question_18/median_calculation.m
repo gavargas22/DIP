@@ -1,9 +1,15 @@
+% Guillermo Vargas
+
 % The median of a data set is the middle number
 % If the dataset contains an odd number of values
 % then the median is exactly the middle number.
 % 
 % If the dataset contains an even number of values
 % the median is the average of the two middle values
+%
+% To use this function make sure the source code is added to the MATLAB
+% PATH; after this, then run the function on the MATLAB Command Line, and
+% give it a 1 x n size matrix of numbers. E.g:  [ 1 2 3 ; 4 5 6 ; 7 8 9 ]
 
 function median_output = median_calculation(x)
     median_output = 0;
@@ -14,7 +20,7 @@ function median_output = median_calculation(x)
     % Check if the array has an even or odd number of values by taking the modulus divided by two.
     parity = mod(length(sorted_values), 2);
     % Start the process of getting the median.
-    % If the parity of the modulus result is not equal to 0 the parity of the values given is even.
+    % If the parity of the modulus result is not equal to 0, the parity of the values given is even.
     if ~(parity == 0)
         %Take the size of the array given, substract one and divide by two, to the result add one and go to the index of the array at the result.
         index_at = ((array_length - 1)/2) + 1;

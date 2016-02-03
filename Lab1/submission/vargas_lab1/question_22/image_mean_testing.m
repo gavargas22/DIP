@@ -1,3 +1,5 @@
+% Guillermo Vargas
+
 function result = image_mean_testing()
 % The name of the output file, see line 54
 output_filename = 'mean_calculation';

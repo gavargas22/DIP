@@ -1,6 +1,6 @@
-function image_display = simple_image_statistics(width, height) 
+function image_display = simple_image_statistics(file, width, height) 
     % file_id = fopen(strcat('..\test\', image_name, extension), 'r', 'l');
-    file_id = fopen('C:\Users\gavargas\Developer\DIP\Lab1\test\test.img', 'r', 'l');
+    file_id = fopen(file, 'r', 'l');
     image_subset = fread(file_id, [width, height], 'uint8');
     figure(1);
     hold off;
