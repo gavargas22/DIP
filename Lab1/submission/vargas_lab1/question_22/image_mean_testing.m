@@ -3,7 +3,9 @@
 function result = image_mean_testing()
 % The name of the output file, see line 54
 output_filename = 'mean_calculation';
-% Open up the image and assign it an id.
+% Open up the image and assign it an id. Be careful because the code below
+% needs to be given the relative or absolute path of an image file in the
+% computer where its running, otherwise it will not work.
 file_id = fopen('test\test.img', 'r', 'l');
 % Get a subset of the image, the size is the regular size of the original
 % image 1400x1400.

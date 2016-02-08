@@ -9,9 +9,11 @@
 %
 % To use this function make sure the source code is added to the MATLAB
 % PATH; after this, then run the function on the MATLAB Command Line, and
-% give it a 1 x n size matrix of numbers. E.g:  [ 1 2 3 ; 4 5 6 ; 7 8 9 ]
-
+% give it a 1 x n size matrix of numbers. E.g:  [ 1 2 3 4 5 6 7 8 9 ]
 function median_output = median_calculation(x)
+    % We give it a test matrix to start.
+    x = [ 1 2 3 4 5 6 7 8 9 ]
+    % Initially I set the result to zero because we haven't done anything.
     median_output = 0;
     % Firstly sort the values in the 1x1 array given to start work.
     sorted_values = sort(x);
