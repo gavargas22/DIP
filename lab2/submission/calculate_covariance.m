@@ -36,30 +36,60 @@ end
 % Here I generate a matrix where I will store all the results.
 covariance_matrix = zeros(image_bands);
 
-% I need to do a sum total_number_of_pixels times.
-for index = 1:numel(image_bands)
-    left_band = index;
-    right_band = index + 1;
-    for col = 1:image_bands
-        for row = 1:image_bands
-            covariance_of_bands = sum(sum(((original_image_data(:, :, left_band)) - (band_mean_matrix(left_band))) .* (original_image_data(:, :, right_band) - (band_mean_matrix(right_band)))));
-            covariance_value = (covariance_of_bands) ./ (total_number_of_pixels - 1);
-            covariance_matrix(row, col) = covariance_value;
-        end 
-    end
+% For the calculation of the correlation matrix, we set up the following:
+% ===============================
+% Create a matrix where we store the values of the 9 standard deviations.
+standard_deviation_matrix = zeros(1, image_bands);
+% Calculate standard deviation
+for band_location = 1:numel(standard_deviation_matrix)
+    % Stadard Deviation Calculation
+    for band_location = 1:numel(standard_deviation_matrix)
+        substraction_values = (original_image_data(:, :, band_location) - band_mean_matrix(band_location)).^2;
+        summation_of_values = (sum(sum(substraction_values)))/(image_rows*image_columns);
+        standard_deviation_matrix(band_location) = summation_of_values;
+    end    
 end
 
-% for band_iteration = 1:image_bands - 1
-%     % Set some variables to keep track which bands are we working on.
-%     left_band = band_iteration;
-%     right_band = left_band + 1;
-%     
-%     % I execute the top part of the algorithm first.
-%     covariance_of_bands = sum(sum(((original_image_data(:, :, left_band)) - (band_mean_matrix(left_band))) .* (original_image_data(:, :, right_band) - (band_mean_matrix(right_band)))));
-%     % Now we execute the bottom part of the algorithm.
-%     covariance_value = (covariance_of_bands) ./ (total_number_of_pixels - 1);
-%     covariance_matrix(band_iteration) = covariance_value;
-%     
-% %     covariance_matrix(matrix_location) = ((original_image_data(band_selector - band_mean_matrix())*())/(covariance_matrix_size - 1)
-% end
+correlation_matrix = zeros(image_bands);
+% ================================
 
+% This following code calculates the covariance and correlation matrices.
+
+% I need to do a sum total_number_of_pixels times.
+% Go the first position (1, 1) of the covariance_matrix and put in it, the
+% result of covariance_value of first band and the second band. This
+% operation will occur row x col times. Once the first row x col times are complete,
+% increase the band by one and do it all over again.
+iteration_index = 1;
+% These are just to keep track which band we are working on.
+left_band = 1; right_band = left_band + 1;
+
+while iteration_index < numel(covariance_matrix) && right_band <= 9
+    % Go through the whole matrix column by column and row by row.
+    for col = 1:image_bands
+        for row = 1:image_bands
+            covariance_of_bands = sum(sum(((original_image_data(:, :, col)) - (band_mean_matrix(col))) .* (original_image_data(:, :, row) - (band_mean_matrix(row)))));
+            covariance_value = (covariance_of_bands) ./ (total_number_of_pixels - 1);
+            % Insert the covariance value into its corresponding position.
+            covariance_matrix(row, col) = covariance_value;
+            % Now perform the computation of the correlation matrix.
+%             correlation_value = (covariance_value)/(standard_deviation_matrix(col)*standard_deviation_matrix(row));
+            % Insert the correlation value into its matrix at corresponding row and col.
+%             correlation_matrix(row, col) = correlation_value;
+            % Increase the iteration number to continue with the process.
+            iteration_index = iteration_index + 1;
+            % This may not be needed:
+            if right_band < 9
+                left_band = left_band + 1;
+                right_band = left_band + 1;
+            elseif right_band == 9
+                left_band = 1;
+                right_band = left_band + 1;
+            end
+                
+        end
+    end
+    % Show the resulting matrix.
+    covariance_matrix
+%     correlation_matrix
+end
