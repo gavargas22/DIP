@@ -45,8 +45,8 @@ for band_location = 1:numel(standard_deviation_matrix)
     % Stadard Deviation Calculation
     for band_location = 1:numel(standard_deviation_matrix)
         substraction_values = (original_image_data(:, :, band_location) - band_mean_matrix(band_location)).^2;
-        summation_of_values = (sum(sum(substraction_values)))/(image_rows*image_columns);
-        standard_deviation_matrix(band_location) = summation_of_values;
+        summation_of_values = (sum(sum(substraction_values)))/((image_rows*image_columns)-1);
+        standard_deviation_matrix(band_location) = sqrt(summation_of_values);
     end    
 end
 
@@ -73,9 +73,9 @@ while iteration_index < numel(covariance_matrix) && right_band <= 9
             % Insert the covariance value into its corresponding position.
             covariance_matrix(row, col) = covariance_value;
             % Now perform the computation of the correlation matrix.
-%             correlation_value = (covariance_value)/(standard_deviation_matrix(col)*standard_deviation_matrix(row));
+            correlation_value = (covariance_value)/(standard_deviation_matrix(col)*standard_deviation_matrix(row));
             % Insert the correlation value into its matrix at corresponding row and col.
-%             correlation_matrix(row, col) = correlation_value;
+            correlation_matrix(row, col) = correlation_value;
             % Increase the iteration number to continue with the process.
             iteration_index = iteration_index + 1;
             % This may not be needed:
@@ -91,5 +91,5 @@ while iteration_index < numel(covariance_matrix) && right_band <= 9
     end
     % Show the resulting matrix.
     covariance_matrix
-%     correlation_matrix
+    correlation_matrix
 end
