@@ -1,0 +1,36 @@
+% Guillermo Vargas
+% February 10,2016
+
+% This function takes an image and calculates the covariance of the image of n bands.
+
+% First, we select the image that we want to analyze through a dialog
+[FileName,PathName] = uigetfile('*.img','Select the image to apply transformation to.');
+% Proceed now to open the file
+original_file_id = fopen([PathName FileName], 'r', 'l');
+% Obtain information about the file from the user through a dialog box.
+image_data_prompt = {'Enter image row size:','Enter image column size:', 'Enter the number of bands in image:'};
+dialog_title = 'Image Size Information';
+num_lines = 1;
+default_answer = {'1400', '1400', '9'};
+user_gathered_image_information = inputdlg(image_data_prompt, dialog_title, num_lines, default_answer);
+
+% We store in matrix the obtained strings and convert them to numbers.
+image_information = str2double(user_gathered_image_information(:)');
+image_rows = image_information(1);
+image_columns = image_information(2);
+image_bands = image_information(3);
+% I set a variable to the number of total items in the image.
+total_number_of_pixels = image_rows * image_columns;
+
+% Use MATLAB to open the image file.
+file_id = fopen(file, 'r', 'l');
+    image_subset = fread(file_id, [width, height], 'uint8');
+    figure(1);
+    hold off;
+    imagesc(image_subset');
+    fclose(file_id);
+    axis image;
+    title('Test Image');
+    xlabel('column');
+    ylabel('row');
+    hold on;
