@@ -1,5 +1,8 @@
-function [ output_args ] = calculate_covariance()
-%This function takes an image and calculates the covariance of the image.
+% Guillermo Vargas
+% February 10,2016
+
+% This function takes an image and calculates the covariance of the image of n bands.
+
 % First, we select the image that we want to analyze through a dialog
 [FileName,PathName] = uigetfile('*.img','Select the image to analyze.');
 % Proceed now to open the file
@@ -33,16 +36,18 @@ for band_selector = 1:image_bands
     band_mean_matrix(band_selector) = mean(mean(original_image_data(:, :, band_selector)));
 end
 
-% Here I generate a matrix where I will store all the results.
+% Here I generate a matrix where I will store all the results for the
+% covariance calculation.
 covariance_matrix = zeros(image_bands);
 
-% For the calculation of the correlation matrix, we set up the following:
+
 % ===============================
-% Create a matrix where we store the values of the 9 standard deviations.
+% For the calculation of the correlation matrix, we set up the following:
+% Create a matrix where we store the values of the (number of bands) standard deviations.
 standard_deviation_matrix = zeros(1, image_bands);
 % Calculate standard deviation
 for band_location = 1:numel(standard_deviation_matrix)
-    % Stadard Deviation Calculation
+    % Stadard Deviation Calculation, I do it step by step to avoid bugs.
     for band_location = 1:numel(standard_deviation_matrix)
         substraction_values = (original_image_data(:, :, band_location) - band_mean_matrix(band_location)).^2;
         summation_of_values = (sum(sum(substraction_values)))/((image_rows*image_columns)-1);
@@ -50,25 +55,27 @@ for band_location = 1:numel(standard_deviation_matrix)
     end    
 end
 
+% Create an empty matrix for storing the actual correlation matrix
+% generated in the code below.
 correlation_matrix = zeros(image_bands);
 % ================================
 
 % This following code calculates the covariance and correlation matrices.
 
-% I need to do a sum total_number_of_pixels times.
-% Go the first position (1, 1) of the covariance_matrix and put in it, the
-% result of covariance_value of first band and the second band. This
-% operation will occur row x col times. Once the first row x col times are complete,
-% increase the band by one and do it all over again.
+% Value to keep track on what iteration we are on.
 iteration_index = 1;
 % These are just to keep track which band we are working on.
 left_band = 1; right_band = left_band + 1;
 
+% A while loop to continue calculating until we reach the end of the
+% covariance matrix.
 while iteration_index < numel(covariance_matrix) && right_band <= 9
-    % Go through the whole matrix column by column and row by row.
+    % Go through the whole matrix column by column first and row by row in each column.
     for col = 1:image_bands
         for row = 1:image_bands
+            % Execute the numerator of the covariance calculation first.
             covariance_of_bands = sum(sum(((original_image_data(:, :, col)) - (band_mean_matrix(col))) .* (original_image_data(:, :, row) - (band_mean_matrix(row)))));
+            % Calculate the covariance with the denominator of the formula.
             covariance_value = (covariance_of_bands) ./ (total_number_of_pixels - 1);
             % Insert the covariance value into its corresponding position.
             covariance_matrix(row, col) = covariance_value;
@@ -78,18 +85,10 @@ while iteration_index < numel(covariance_matrix) && right_band <= 9
             correlation_matrix(row, col) = correlation_value;
             % Increase the iteration number to continue with the process.
             iteration_index = iteration_index + 1;
-            % This may not be needed:
-            if right_band < 9
-                left_band = left_band + 1;
-                right_band = left_band + 1;
-            elseif right_band == 9
-                left_band = 1;
-                right_band = left_band + 1;
-            end
                 
         end
     end
-    % Show the resulting matrix.
+    % Show the resulting matrices, and that's it!
     covariance_matrix
     correlation_matrix
 end
