@@ -91,4 +91,14 @@ while iteration_index < numel(covariance_matrix) && right_band <= 9
     % Show the resulting matrices, and that's it!
     covariance_matrix
     correlation_matrix
+    
+    % Display the matrices.
+    figure(1);
+    hold off;
+    imagesc(covariance_matrix');
+    axis image;
+    title('Test Image');
+    xlabel('column');
+    ylabel('row');
+    hold on;
 end

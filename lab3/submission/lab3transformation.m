@@ -26,24 +26,58 @@ total_number_of_pixels = image_rows * image_columns;
 
 % Use MATLAB to open the image file.
 image_data = fread(original_file_id, [image_rows, image_columns], 'uint8');
+figure, imagesc(image_data')
 
 % Now I start the transformations.
 % Scale the image by the given factor.
 
-scaling_factor_matrix = [2 0 0; 0 2 0; 0 0 1];
-% scaling_transform = maketform('affine2d', scaling_factor_matrix);
-% uv1 = tformfwd(scaling_transform, [x y]);
+% We create an empty matrix where to store the new values for the new image
+scaled_matrix = zeros(image_rows*image_scale_factor, image_columns*image_scale_factor);
+[scaled_matrix_row, scaled_matrix_col] = size(scaled_matrix);
 
-image_transform_operation = maketform('affine2d', scaling_factor_matrix);
-J = tformfwd(image_data, image_transform_operation);
+% The rotation transformation can be expressed in terms of a rotation matrix.
+rotation_operation = [-sind(image_rotation_angle) cosd(image_rotation_angle) ; cosd(image_rotation_angle) sind(image_rotation_angle)];
+rotated_matrix = zeros(image_rows, image_columns);
 
-figure(1);
+% Go col by col and row by row until all have been traversed, substract one because we
+% don't want the extra pixel in the result
+for col = 1:image_columns - 1
+    for row = 1:image_rows - 1
+        % Obtain the location x that should be scaled and scale it by the
+        % scale factor, do the same for the y location add one to remove a
+        % premature end to calculation when initial position is zero.
+        x = floor(col*image_scale_factor)+1;
+        y = floor(row*image_scale_factor)+1;
+        % Using the rotation transformation matrix, set the location to the rotated position.
+        position_of_pixel_to_transform = [x ; y];
+        %transformed_position = floor(rotation_operation * position_of_pixel_to_transform)';
+        % Insert at the scaled location the pixel value of the original
+        % image at the current row and column in the iteration.
+        scaled_matrix(x, y) = image_data(row, col);
+        rotated_matrix(x, y) = image_data(row, col);
+    end
+end
+figure(2), imagesc(scaled_matrix)
+
+% Rotation operations
+for rotated_x = scaled_matrix_col:-1:1
+    for rotated_y = scaled_matrix_row:-1:1
+        x_nought = floor(rotated_x*cosd(image_rotation_angle) + rotated_y*sind(image_rotation_angle));
+        y_nought = floor(rotated_x*sind(image_rotation_angle) + rotated_y*cosd(image_rotation_angle));
+        
+        rotated_matrix(rotated_x, rotated_y) = rotated_matrix(x_nought, y_nought);
+        
+    end
+end
+
+%  Display the transformed matrix.
+figure(3);
 hold off;
-imagesc(J');
-fclose(original_file_id);
+imagesc(rotated_matrix');
 axis image;
-title('Test Image');
+title('Scaled Image');
 xlabel('column');
 ylabel('row');
 hold on;
+
 
