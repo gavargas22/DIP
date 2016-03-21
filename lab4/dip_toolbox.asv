@@ -29,9 +29,6 @@ function enhance_image_with_contrast_stretching(data, slope_value, mid_point_val
     stretched_contrast_image = 1./(1 + (mid_point_value./(data + eps)).^(slope_value));
     figure(display);
     imagesc(stretched_contrast_image);
-    % Store the resulting image in case we want to save it.
-    setappdata(display, 'stretched_image', stretched_contrast_image);
-    
 end
 % ////////////////////////////////////////////////////
 
@@ -58,9 +55,8 @@ end
 
 function save_image_button_Callback(hObject, eventdata, handles)
     % Open a dialog to save image.
-    [filename, pathname] = uiputfile({'*.jpg;','JPG File';'*.*','All Files' },'Save Image');
-    data_to_save = getappdata(display, 'stretched_image');
-    imwrite(data_to_save, [pathname filename]);
+    uiputfile({'*.jpg;','All Image Files';...'*.*','All Files' },'Save Image',...
+          'C:\Work\newfile.jpg')
 end
 
 
