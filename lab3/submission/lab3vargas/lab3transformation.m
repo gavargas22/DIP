@@ -57,25 +57,27 @@ for col = 1:image_columns - 1
         rotated_matrix(x, y) = image_data(row, col);
     end
 end
-figure(2), imagesc(scaled_matrix)
+figure(2), imagesc(scaled_matrix), title('Scaled Image'), colormap gray;
 
 % Rotation operations
-for rotated_x = scaled_matrix_col:-1:1
-    for rotated_y = scaled_matrix_row:-1:1
-        x_nought = floor(rotated_x*cosd(image_rotation_angle) + rotated_y*sind(image_rotation_angle));
-        y_nought = floor(rotated_x*sind(image_rotation_angle) + rotated_y*cosd(image_rotation_angle));
-        
-        rotated_matrix(rotated_x, rotated_y) = rotated_matrix(x_nought, y_nought);
-        
-    end
-end
+% for rotated_x = scaled_matrix_col:-1:1
+%     for rotated_y = scaled_matrix_row:-1:1
+%         x_nought = floor(rotated_x*cosd(image_rotation_angle) + rotated_y*sind(image_rotation_angle));
+%         y_nought = floor(rotated_x*sind(image_rotation_angle) + rotated_y*cosd(image_rotation_angle));
+%         
+%         rotated_matrix(rotated_x, rotated_y) = rotated_matrix(x_nought, y_nought);
+%         
+%     end
+% end
+rotated_image = imrotate(scaled_matrix, image_rotation_angle, 'bilinear');
 
 %  Display the transformed matrix.
 figure(3);
+colormap gray;
 hold off;
-imagesc(rotated_matrix');
+imagesc(rotated_image);
 axis image;
-title('Scaled Image');
+title('Rotated Image');
 xlabel('column');
 ylabel('row');
 hold on;

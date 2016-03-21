@@ -25,7 +25,7 @@ end
 % ////////////////////////////////////////////////////
 % Image Manipulation Functions
 % Function to enhance the light pixels of the image selected
-function enhance_image_with_parameters(data, slope_value, mid_point_value, display)
+function enhance_image_with_contrast_stretching(data, slope_value, mid_point_value, display)
     stretched_contrast_image = 1./(1 + (mid_point_value./(data + eps)).^(slope_value));
     figure(display);
     imagesc(stretched_contrast_image);
@@ -99,7 +99,7 @@ function image_selector_button_Callback(hObject, eventdata, handles)
     % Obtain/Set initial conditions for transformation.
     set(handles.mid_point, 'Min', min(min(doubled_image_data)));
     set(handles.mid_point, 'Max', max(max(doubled_image_data)));
-    s
+    set(handles.mid_point, 'Value', mean2(doubled_image_data));
     
     % Now I create another figure where to display the modified image.
     modified_image_container = figure('Name', 'Enhanced Image');
@@ -125,7 +125,7 @@ end
 % --- Executes on slider movement.
 function slope_Callback(hObject, eventdata, handles)
     % Execute Contrast Stretching with the value of slope variation
-    enhance_image_with_parameters(handles.doubled_image_data, get(hObject, 'Value'), mean2(handles.doubled_image_data), handles.modified_picture_display);
+    enhance_image_with_contrast_stretching(handles.doubled_image_data, get(hObject, 'Value'), handles.mid_point.Value, handles.modified_picture_display);
     % Set the current slope value to use in the other function.
     handles.current_slope_value = get(hObject, 'Value');
     guidata(hObject, handles);
@@ -149,7 +149,7 @@ end
 % --- Executes on slider movement.
 function mid_point_Callback(hObject, eventdata, handles)
     % Execute Contrast Stretching with the value of the midpoint variation
-    enhance_image_with_parameters(handles.doubled_image_data, get(handles.slope), get(hObject, 'Value'), handles.modified_picture_display);
+    enhance_image_with_contrast_stretching(handles.doubled_image_data, handles.slope.Value, get(hObject, 'Value'), handles.modified_picture_display);
     % Set the current slope value to use in the other function.
     handles.current_midpoint_value = get(hObject, 'Value');
     guidata(hObject, handles);
@@ -166,8 +166,4 @@ function mid_point_CreateFcn(hObject, eventdata, handles)
         set(hObject,'BackgroundColor',[.9 .9 .9]);
     end
     
-    % Set the maximum, minimum and default modpoint values.
-    % set(hObject, 'Max', max(max(handles.doubled_image_data)));
-    % set(hObject, 'Min', min(min(handles.doubled_image_data)));
-    % set(hObject, 'Value', mean2(handles.doubled_image_data));
 end
