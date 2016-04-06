@@ -1,6 +1,8 @@
 % This code will apply certain enhancements to the NASA images.
 % First, we select the image that we want to analyze through a dialog
 
+% THE FOLLOWING IS THE CODE REQUIRED TO USE THE GUI SO IT IS NOT ESSENTIAL
+% TO THE UNDERSTANDING OF THE ALGORITHM I USED TO MODIFY THE IMAGES.
 function varargout = dip_toolbox(varargin)
     % Begin initialization code - DO NOT EDIT
     gui_Singleton = 1;
@@ -19,48 +21,14 @@ function varargout = dip_toolbox(varargin)
     else
         gui_mainfcn(gui_State, varargin{:});
     end
-    % End initialization code - DO NOT EDIT
 end
-
-% ////////////////////////////////////////////////////
-% Image Manipulation Functions
-% Function to enhance the light pixels of the image selected
-function enhance_image_with_contrast_stretching(data, slope_value, mid_point_value, display)
-    stretched_contrast_image = 1./(1 + (mid_point_value./(data + eps)).^(slope_value));
-    figure(display);
-    imagesc(stretched_contrast_image);
-end
-% ////////////////////////////////////////////////////
-
-
-% --- Executes just before dip_toolbox is made visible.
 function dip_toolbox_OpeningFcn(hObject, eventdata, handles, varargin)
     handles.output = hObject;
-    % Update handles structure
     guidata(hObject, handles);
 end
-
-
-% --- Outputs from this function are returned to the command line.
 function varargout = dip_toolbox_OutputFcn(hObject, eventdata, handles) 
-    % varargout  cell array for returning output args (see VARARGOUT);
-    % hObject    handle to figure
-    % eventdata  reserved - to be defined in a future version of MATLAB
-    % handles    structure with handles and user data (see GUIDATA)
-
-    % Get default command line output from handles structure
     varargout{1} = handles.output;
 end
-
-
-% --- Executes on button press in save_image_button.
-function save_image_button_Callback(hObject, eventdata, handles)
-% hObject    handle to save_image_button (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-end
-
-
 % --- If Enable == 'on', executes on mouse press in 5 pixel border.
 % --- Otherwise, executes on mouse press in 5 pixel border or over save_image_button.
 function save_image_button_ButtonDownFcn(hObject, eventdata, handles)
@@ -69,8 +37,76 @@ function save_image_button_ButtonDownFcn(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 end
 
+% --- Executes during object creation, after setting all properties.
+function slope_CreateFcn(hObject, eventdata, handles)
+    % hObject    handle to slope (see GCBO)
+    % eventdata  reserved - to be defined in a future version of MATLAB
+    % handles    empty - handles not created until after all CreateFcns called
+    
+    % Hint: slider controls usually have a light gray background.
+    if isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+        set(hObject,'BackgroundColor',[.9 .9 .9]);
+    end
+    
+end
 
-% --- Executes on button press in image_selector_button.
+% --- Executes during object creation, after setting all properties.
+function mid_point_CreateFcn(hObject, eventdata, handles)
+    if isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+        set(hObject,'BackgroundColor',[.9 .9 .9]);
+    end
+    
+end
+
+% --- Executes during object creation, after setting all properties.
+function normalization_value_CreateFcn(hObject, eventdata, handles)
+    % Hint: slider controls usually have a light gray background.
+    if isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+        set(hObject,'BackgroundColor',[.9 .9 .9]);
+    end
+end
+% //////////////////////////////////////////////////////////////////////
+
+
+
+% ////////////////////////////////////////////////////
+% IMAGE MANIPULATION FUNCTIONS
+
+% Function to enhance the light pixels of the image selected
+function enhance_image_with_contrast_stretching(data, slope_value, mid_point_value, display)
+    stretched_contrast_image = 1./(1 + (mid_point_value./(data + eps)).^(slope_value));
+    figure(display);
+    imagesc(stretched_contrast_image);
+    % Store the resulting image in case we want to save it.
+    setappdata(display, 'stretched_image', stretched_contrast_image);
+end
+
+function perform_histogram_equalization_with_values(image_data, number_of_divisions, display)
+    equalized_image = histeq(image_data, number_of_divisions);
+    figure(display);
+    imagesc(equalized_image);
+    % Store the resulting image to save later.
+    setappdata(display, 'stretched_image', equalized_image);
+end
+
+% ///////////////////////////////////////////////////
+
+
+% FUNCTION EXECUTED TO SAVE THE IMAGE THAT WAS ENHANCED.
+function save_image_button_Callback(hObject, eventdata, handles)
+    % Open a dialog to save image.
+    [filename, pathname] = uiputfile({'*.jpg;','JPG File';'*.*','All Files' },'Save Image');
+    data_to_save = getappdata(handles.modified_picture_display, 'stretched_image');
+    % Convert back to uint8
+    resulting_image = im2uint8(data_to_save);
+    imwrite(resulting_image, [pathname filename]);
+    % Generate new statistics for image and save them as well
+end
+% //////////////////////////////////////////////////////////
+
+
+% THIS FUNCTION IS THE ENTRY POINT WHERE THE IMAGE TO BE ENHANCED IS
+% SELECTED.
 function image_selector_button_Callback(hObject, eventdata, handles)
     % Open the file
     [FileName,PathName] = uigetfile('.JPG', 'Select the image to apply enhacements to.');
@@ -118,11 +154,11 @@ function image_selector_button_Callback(hObject, eventdata, handles)
     % Create a Figure to display the image
     handles.modified_picture_display = modified_image_container;
     guidata(hObject,handles);
-    
 end
 
 
-% --- Executes on slider movement.
+% THIS FUNCTION EXECUTES WHEN THE SLIDER OF THE SLOPE VALUE IS MOVED TO
+% RESULT IN AN ENHANCED IMAGE.
 function slope_Callback(hObject, eventdata, handles)
     % Execute Contrast Stretching with the value of slope variation
     enhance_image_with_contrast_stretching(handles.doubled_image_data, get(hObject, 'Value'), handles.mid_point.Value, handles.modified_picture_display);
@@ -130,23 +166,11 @@ function slope_Callback(hObject, eventdata, handles)
     handles.current_slope_value = get(hObject, 'Value');
     guidata(hObject, handles);
 end
+% //////////////////////////////////////////////////////////////////
 
 
-% --- Executes during object creation, after setting all properties.
-function slope_CreateFcn(hObject, eventdata, handles)
-    % hObject    handle to slope (see GCBO)
-    % eventdata  reserved - to be defined in a future version of MATLAB
-    % handles    empty - handles not created until after all CreateFcns called
-    
-    % Hint: slider controls usually have a light gray background.
-    if isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-        set(hObject,'BackgroundColor',[.9 .9 .9]);
-    end
-    
-end
-
-
-% --- Executes on slider movement.
+% FUNCTION THAT CALCULATES NEW IMAGE BASED ON THE VALUE SELECTED IN THE
+% MIDPOINT SLIDER
 function mid_point_Callback(hObject, eventdata, handles)
     % Execute Contrast Stretching with the value of the midpoint variation
     enhance_image_with_contrast_stretching(handles.doubled_image_data, handles.slope.Value, get(hObject, 'Value'), handles.modified_picture_display);
@@ -154,16 +178,16 @@ function mid_point_Callback(hObject, eventdata, handles)
     handles.current_midpoint_value = get(hObject, 'Value');
     guidata(hObject, handles);
 end
+% //////////////////////////////////////////////////////////////////////
 
-% --- Executes during object creation, after setting all properties.
-function mid_point_CreateFcn(hObject, eventdata, handles)
-    % hObject    handle to mid_point (see GCBO)
-    % eventdata  reserved - to be defined in a future version of MATLAB
-    % handles    empty - handles not created until after all CreateFcns called
 
-    % Hint: slider controls usually have a light gray background.
-    if isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-        set(hObject,'BackgroundColor',[.9 .9 .9]);
-    end
-    
+% FUNCTION THAT CALCULATES NEW IMAGE BASED ONT HE VALUE CHOSEN FOR
+% HISTOGRAM EQUALIZATION.
+function normalization_value_Callback(hObject, eventdata, handles)
+    % Perform calculation of histogram equalization with desired values.
+    number_of_divisions = round(get(hObject, 'Value'));
+    perform_histogram_equalization_with_values(handles.doubled_image_data, number_of_divisions, handles.modified_picture_display)
+    % Set the current divisions value for the histogram equalization
+    handles.current_histogram_division_value = get(hObject, 'Value');
+    guidata(hObject, handles);
 end

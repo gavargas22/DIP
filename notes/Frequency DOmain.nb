@@ -1,0 +1,121 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 10.2' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[      4881,        112]
+NotebookOptionsPosition[      4605,         98]
+NotebookOutlinePosition[      4947,        113]
+CellTagsIndexPosition[      4904,        110]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+Cell[TextData[{
+ "Edge enhancement.\n\nRduces an image to onlyshow edge details\n\nObjects \
+are reduced to their outlines, several common filtering techniques to do this\
+\n\n",
+ StyleBox["Linear", "Subtitle"],
+ "\n\nShift Difference\nPrewitt\nLaplacian\n\n",
+ StyleBox["Non Linear", "Subtitle"],
+ "\n\nSobel\nKirch\nRobinson\n\nShift Difference technique, simple and \
+enhacen horizonal or verucal edge information.\n\nHow?\nTranslate the image \
+by on epixel\nSubstract shifted image from the original image\nShar edges are \
+going to be enhanced because of substraction of each pixel from its \
+horizontal neighbor -> rough calculation of PBS.\n\n",
+ StyleBox["Frequency Domain\n", "Title"],
+ StyleBox["Fourier Analysis\n", "Subtitle"],
+ "SpaMathemtical technique for spearating an image into spatial frequency \
+components.. Since images can be considered two spatial dimension of spatial \
+dimensions. There fore image have also a spatial frequenc and we can do some \
+things in the frequency domain easier than we can in the spatial domain, \
+things such as convolutions.\n\n\nA bit more mathmatically speaking\n\nFor \
+images a 1D function is just a row and columns, a complete subset of roes and \
+columns\n\nUpper case letters deonte images. lowecase letters denote \
+position.\n\nAveraging in 1 dimention. if we have an input image I we average \
+the value stored at each location  and the values next to it. the result at \
+location ii in the output image J\n\nBasically the most important concept is \
+the Kernel, this is a location that produces a mathematical function where \
+the inout is the values surrounding it. This is the concept of the \
+nieghborhood\n\nBoundary COnditions\n\nWhat do we do when the neighborhood \
+part does not exist. There are a  couple of strategies\n\n",
+ StyleBox["Padding, we can do zero padding where we add zeroes as many as \
+needed depending on the kernel.",
+  FontWeight->"Bold"],
+ "\n \n",
+ StyleBox["We can also do duplicate padding, where we copy the number at the \
+boundary, this will affect in various other ways.\n",
+  FontWeight->"Bold"],
+ "\n",
+ StyleBox["Cyclic padding, where we assume that the function is a repeating \
+pattern, where we pad with the boundaries of the section.\n",
+  FontWeight->"Bold"],
+ "\n",
+ StyleBox["Some of this strategies are best for images, in the case of \
+images, duplicate padding is the best, because it could be resonably assumed \
+that the edges will have more of the same. Cyclical are not as good because \
+in images we are going to rarely have repeating patterns.\n\nWe can create a \
+Kernel",
+  FontSlant->"Italic"],
+ " which will contain a function it it that is equivalent to calculating an \
+average. Formalizing it:\n\nF (correlation) I(x) = summation from i = -N to N \
+of F(i)I(x+i)\n\n",
+ StyleBox["F\[Degree]I(I) = ", "Code"],
+ StyleBox[Cell[BoxData[
+  FormBox[
+   RowBox[{
+    UnderoverscriptBox["\[Sum]", 
+     RowBox[{"i", "=", 
+      RowBox[{"-", "n"}]}], "n"], 
+    RowBox[{
+     RowBox[{"F", "(", "i", ")"}], 
+     RowBox[{"I", "(", 
+      RowBox[{"x", " ", "+", " ", "i"}], ")"}]}]}], TraditionalForm]], "Code",
+  FormatType->"TraditionalForm"], "Code"],
+ StyleBox["\n\nThere exists the gaussian filter, how can we write a function \
+that uses a gaussian distribution?\n\n\n", "Code"],
+ "\n"
+}], "Text",
+ CellChangeTimes->{{3.667756515803178*^9, 3.6677567099535737`*^9}, {
+  3.6677592837697363`*^9, 3.6677593211745405`*^9}, {3.667759354004765*^9, 
+  3.6677594437587366`*^9}, {3.668361302795382*^9, 3.6683613933548703`*^9}, {
+  3.668361435946516*^9, 3.6683614565073557`*^9}, {3.668361488117725*^9, 
+  3.668361578706477*^9}, {3.6683616093673625`*^9, 3.6683618558183117`*^9}, {
+  3.6683619113110476`*^9, 3.6683620469988155`*^9}, {3.668362086826438*^9, 
+  3.668362231856849*^9}, {3.6683622638482866`*^9, 3.6683622834777713`*^9}, {
+  3.6683623708017936`*^9, 3.6683623709818125`*^9}, {3.6683625099404783`*^9, 
+  3.6683625104405193`*^9}}],
+
+Cell[BoxData[""], "Input",
+ CellChangeTimes->{{3.667756612305149*^9, 3.6677566203282356`*^9}}]
+},
+WindowSize->{1920, 997},
+WindowMargins->{{-8, Automatic}, {Automatic, -8}},
+FrontEndVersion->"10.2 for Microsoft Windows (64-bit) (July 7, 2015)",
+StyleDefinitions->"Default.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[558, 20, 3946, 73, 1329, "Text"],
+Cell[4507, 95, 94, 1, 31, "Input"]
+}
+]
+*)
+
+(* End of internal cache information *)
