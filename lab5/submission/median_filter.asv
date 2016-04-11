@@ -1,6 +1,6 @@
 % Guillermo Vargas
 % 2D Median Filter Operation
-% April 5,2016
+% March 5,2016
 
 % This code will apply certain transformations to the image selected.
 
@@ -33,11 +33,11 @@ default_kernel_size = {'3', '3'};
 user_gathered_kernel_information = inputdlg(filter_information_promt, filter_information_dialog_title, 1, default_kernel_size);
 % We store in matrix the obtained strings and convert them to numbers.
 kernel_information = str2double(user_gathered_kernel_information(:)');
-kernel_rows = kernel_information(1);
-kernel_columns = kernel_information(2);
+image_rows = image_information(1);
+image_columns = image_information(2);
 
 % Now we use MATLAB to do a spatial filtering.
-filtered_image = medfilt2(image_data, [kernel_rows kernel_columns]);
+filtered_image = medfilt2(image_data, [4 4]);
 
 % Display the results side by side.
 imshowpair(image_data, filtered_image, 'montage');
