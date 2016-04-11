@@ -27,31 +27,14 @@ total_number_of_pixels = image_rows * image_columns;
 image_data = multibandread([PathName FileName], [image_rows image_columns, 1], 'float', 0, 'bsq', 'ieee-le');
 
 % Execute a La Placian Transform to sharpen image.
-% ================================================
-% Define the filter in matrix, kernel form.
-laplace_filter = [0 1 0 ; 1 -4 1 ; 0 1 0];
-% Initialize the matrix where to store the resulting data.
-image_data_with_filter_applied = zeros(image_rows, image_columns);
+first_laplace_filter = [0 1 0 ; 1 -4 1 ; 0 1 0];
+
 % I now pad the image with zeros to run the kernel
-padding_in_rows = 1;
-padding_in_columns = 1;
-padded_image_data = padarray(image_data, [padding_in_rows, padding_in_columns]);
+padded_image_data = padarray(image_data, [1, 1]);
 % Get some information about the padded image data.
-[padded_rows, padded_columns] = size(padded_image_data);
+[padded_rows, padded_columns] = size(p
 
-% Now we implement the equation for the laplacian sharpening. Going row by
-% row and column by column, I substract two here because of the padding
-% that I used.
-
-for col = 1:padded_rows - 2
-    for row = 1:padded_columns - 2
-        % Apply the transformation here, defined by the equation of the
-        % laplacian
-        image_data_with_filter_applied(row, col) = sum(sum(laplace_filter .* padded_image_data(row:row + 2, col:col + 2)));
-    end
+% Now we implement the equation for the laplacian sharpening.
+for row = 1:size(padded_image_data, 1) - 2
+    for col = 1:size(padded_image_data, 2) 
 end
-
-sharpened_image = image_data_with_filter_applied - image_data;
-
-% Display the results side by side.
-imshowpair(image_data, sharpened_image, 'montage');
