@@ -1,0 +1,11 @@
+ENVI
+samples = 1400
+lines   = 1400
+bands   = 1
+data type = 2
+interleave = bsq
+file type = ENVI Standard
+header offset = 0
+byte order = 0
+band names = {
+ Conv (Band 1:test_ms.img)}
