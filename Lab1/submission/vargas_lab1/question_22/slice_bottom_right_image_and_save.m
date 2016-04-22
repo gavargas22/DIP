@@ -10,9 +10,9 @@ function resulting_image = slice_bottom_right_image_and_save()
     % Firstly we get the original image and put it a variable
     original_file_id = fopen('test\test.img', 'r', 'l');
     % Put all the data of the image in a variable 
-    original_image_matrix = fread(original_file_id, [1400, 1400], 'uint8');
-    % Size of the matrix to generate the output.
-    [original_rows, original_columns] = size(original_image_matrix);
+    original_image_matrix 
+    [original_rows, original_columns] = size(or= fread(original_file_id, [1400, 1400], 'uint8');
+    % Size of the matrix to generate the output.iginal_image_matrix);
     % We then extract the lower right section according to the size given
     % in the arguments of the function.
     image_cutout = original_image_matrix((original_rows - height):(original_rows), (original_columns - width):(original_columns));
