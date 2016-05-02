@@ -73,7 +73,7 @@ left_band = 1; right_band = left_band + 1;
 
 % A while loop to continue calculating until we reach the end of the
 % covariance matrix.
-while iteration_index < numel(covariance_matrix) && right_band <= 9
+while iteration_index < numel(covariance_matrix) && right_band <= image_bands
     % Go through the whole matrix column by column first and row by row in each column.
     for col = 1:image_bands
         for row = 1:image_bands
@@ -100,6 +100,7 @@ end
 % Let's see which eigenvalues contain the most variance percentage
 % Get all the eigenvalues in a matrix
 eigenvalues_matrix = diag(D);
+
 % Calculate the percentage of variance
 percent_total_variance_matrix = (eigenvalues_matrix(:)*100)/sum(eigenvalues_matrix);
 
@@ -118,26 +119,26 @@ end
 
 % Now we obtain the new brightness values
 % The resulting image of the following operation will be stored in the following matrix
-principal_component_image = zeros(image_rows, image_columns);
+principal_component_image = zeros(image_rows, image_columns, image_bands);
+% Get some info about the eigenvector matrix.
+[bands_k, components_p] = size(V);
+% Iterate to get the resulting image.
 for col = 1:image_columns
     for row = 1:image_rows
-        % Initialize a matrix to store the operation to be summed.
-        multiplication_result = zeros(1, 6);
-        for band = 1:image_bands
-            % Get information about the eigenvector matrix.
-            [eigenvector_matrix_rows, eigenvector_matrix_columns] =  size(V);
-            for v_col = 1:eigenvector_matrix_columns
-                for v_row = 1:eigenvector_matrix_rows
-                    %We grab the eigenvectors here and proceed.
-                    multiplication_result(1, band) = V(v_row, v_col) * original_image_data(row, col, band);
-                end
-            end
-            % Reset the band count so that we can iterate again.
-            if band == 6
-                band = 1;
-            end
+        for band = 1:bands_k
+            principal_component_image(row, col, band) = sum(V(:, band) .* squeeze(original_image_data(row, col, :)));
         end
-        % Sum all the values of the operation and insert the values into the result matrix.
-        principal_component_image(row, col) = sum(multiplication_result);
+        if band == image_bands
+            band = 1;
+        end
     end
 end
+
+% Convert to integers
+integer_converted_principal_component_image = uint8(principal_component_image);
+
+% Ask user for input on where to save the image
+% Ask for a name to save the file to.
+[save_filename, save_path] = uiputfile({'*.*', 'All Files' }, 'Save Image');
+% Save it
+multibandwrite(integer_converted_principal_component_image(:, :, 6), [save_path save_filename], 'bsq');
