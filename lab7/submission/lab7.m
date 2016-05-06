@@ -99,7 +99,7 @@ end
 
 % Let's see which eigenvalues contain the most variance percentage
 % Get all the eigenvalues in a matrix
-eigenvalues_matrix = diag(D);
+eigenvalues_matrix = sort(diag(D), 'descend');
 
 % Calculate the percentage of variance
 percent_total_variance_matrix = (eigenvalues_matrix(:)*100)/sum(eigenvalues_matrix);
@@ -123,22 +123,20 @@ principal_component_image = zeros(image_rows, image_columns, image_bands);
 % Get some info about the eigenvector matrix.
 [bands_k, components_p] = size(V);
 % Iterate to get the resulting image.
-for col = 1:image_columns
-    for row = 1:image_rows
-        for band = 1:bands_k
-            principal_component_image(row, col, band) = sum(V(:, band) .* squeeze(original_image_data(row, col, :)));
+for result_col = 1:image_columns
+    for result_row = 1:image_rows
+        for result_band_selector = 1:bands_k
+            principal_component_image(result_row, result_col, result_band_selector) = sum(V(:, result_band_selector) .* squeeze(original_image_data(result_row, result_col, :)));
         end
-        if band == image_bands
-            band = 1;
+        if result_band_selector == image_bands
+            result_band_selector = 1;
         end
     end
 end
 
-% Convert to integers
-integer_converted_principal_component_image = uint8(principal_component_image);
 
 % Ask user for input on where to save the image
 % Ask for a name to save the file to.
 [save_filename, save_path] = uiputfile({'*.*', 'All Files' }, 'Save Image');
 % Save it
-multibandwrite(integer_converted_principal_component_image(:, :, 6), [save_path save_filename], 'bsq');
+multibandwrite(principal_component_image, [save_path save_filename], 'bsq');

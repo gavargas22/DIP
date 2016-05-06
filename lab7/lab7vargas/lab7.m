@@ -99,7 +99,7 @@ end
 
 % Let's see which eigenvalues contain the most variance percentage
 % Get all the eigenvalues in a matrix
-eigenvalues_matrix = diag(D);
+eigenvalues_matrix = sort(diag(D), 'descend');
 
 % Calculate the percentage of variance
 percent_total_variance_matrix = (eigenvalues_matrix(:)*100)/sum(eigenvalues_matrix);
@@ -134,11 +134,9 @@ for col = 1:image_columns
     end
 end
 
-% Convert to integers
-integer_converted_principal_component_image = uint8(principal_component_image);
 
 % Ask user for input on where to save the image
 % Ask for a name to save the file to.
 [save_filename, save_path] = uiputfile({'*.*', 'All Files' }, 'Save Image');
 % Save it
-multibandwrite(integer_converted_principal_component_image(:, :, 6), [save_path save_filename], 'bsq');
+multibandwrite(principal_component_image, [save_path save_filename], 'bsq');
