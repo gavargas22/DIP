@@ -4,7 +4,7 @@
 % Clear everything
 clear
 % Tell user a message so that they know what is happening next.
-warning('Lets start... Open up the UV light visible JPG... thanks!', 'modal');
+warning('Lets start... Open up the UV light visible JPG... thanks!');
 % Lets get the image from the user
 [FileName,PathName] = uigetfile('*','Open the UV light RGB JPG.');
 
