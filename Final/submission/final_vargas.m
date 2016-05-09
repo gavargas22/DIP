@@ -12,6 +12,8 @@ blacklight_image_data = imread([PathName FileName]);
 
 % Obtain sizes of image
 [blacklight_image_rows, blacklight_image_columns, blacklight_number_of_channels] = size(blacklight_image_data);
+% Convert the original image to uint8 to use it later on.
+double_converted_non_grey_scale_blacklight_image_data = im2double(blacklight_image_data);
 % Convert the RGB image to grayscale.
 grayscale_blacklight_image_data = rgb2gray(blacklight_image_data);
 % Convert the uint to double to perform caluclations on the values.
@@ -70,5 +72,46 @@ imwrite(integer_converted_noise_substracted_starry_night_rgb, [save_path save_fi
 
 % ===========================================
 % Remove the noise now from the image of the UV light.
+% Create empty matrix to store the cleaned up UV image.
+noise_substracted_uv_light_rgb = zeros(blacklight_image_rows, blacklight_image_columns, blacklight_number_of_channels);
+for channel = 1:blacklight_number_of_channels
+    noise_substracted_uv_light_rgb(:, :, channel) = double_converted_non_grey_scale_blacklight_image_data(:, :, channel) - binary_noise_result;
+end
+
+% Now the resulting image, we apply a median filter to remove the zero points where the noise was.
+% I pad the image to apply a transformation
+% padded_noise_substracted_uv_light_rgb = padarray(noise_substracted_uv_light_rgb, 1, ones(3,3));
+integer_uv_image_with_zeros = im2uint8(noise_substracted_uv_light_rgb);
+% Create an empty matrix to store the filtered and averaged UV image
+linearly_averaged_resultant_of_uv_image = im2uint8(zeros(blacklight_image_rows, blacklight_image_columns, blacklight_number_of_channels));
+% Do channel by channel to get RGB
+for channel =  1:blacklight_number_of_channels
+    for col = 11:blacklight_image_columns - 10
+        for row = 11:blacklight_image_rows - 10
+            % If I find an area where the noise has been zeroed...
+            if integer_uv_image_with_zeros(row, col, channel) < 2
+                % Take a look 10 steps left and right of the current
+                % location and average the values...
+                linearly_averaged_resultant_of_uv_image(row, col, channel) = mean([integer_uv_image_with_zeros(row, col-1:col - 10, channel) integer_uv_image_with_zeros(row, col+1:col + 10, channel)]);
+            else
+                % If there is no noise zeroed, then just pull the original
+                % value of brightness.
+                linearly_averaged_resultant_of_uv_image(row, col, channel) = integer_uv_image_with_zeros(row, col, channel);
+            end
+        end
+    end
+    % Finally yo give it an even better filtering action, apply a
+    % medianfilter.
+    linearly_averaged_resultant_of_uv_image(:, :, channel) = medfilt2(linearly_averaged_resultant_of_uv_image(:, :, channel));
+end
+
+
+% Now I save the JPG
+
+% Tell user a message so that they know what is happening next.
+warning('Up next... save the averaged and filtered UV image as a JPG. Please choose a name!');
+[save_filename, save_path] = uiputfile({'*.jpg*', 'JPG' }, 'Save the averaged and filtered UV image JPG');
+% Save it
+imwrite(linearly_averaged_resultant_of_uv_image, [save_path save_filename], 'jpg');
 
 
