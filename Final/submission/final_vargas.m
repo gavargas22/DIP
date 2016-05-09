@@ -9,6 +9,8 @@ warning('Lets start... Open up the UV light visible JPG... thanks!', 'modal');
 [FileName,PathName] = uigetfile('*','Open the UV light RGB JPG.');
 
 blacklight_image_data = imread([PathName FileName]);
+% Save memory by removing useless Scheisse.
+clear FileName PathName;
 
 % Obtain sizes of image
 [blacklight_image_rows, blacklight_image_columns, blacklight_number_of_channels] = size(blacklight_image_data);
@@ -39,6 +41,8 @@ integer_dilated_filter_result_image = im2uint8(dilated_noise_result);
 [save_filename, save_path] = uiputfile({'*.jpg*', 'JPG' }, 'Save Noise Only Image');
 % Save it
 imwrite(integer_dilated_filter_result_image, [save_path save_filename], 'jpg');
+% Save memory by removing useless Scheisse.
+clear save_filename save_path;
 
 % Tell user a message so that they know what is happening next.
 warning('Up next... navigate to open the star night sky of mars image in JPG format.');
@@ -48,6 +52,8 @@ warning('Up next... navigate to open the star night sky of mars image in JPG for
 starry_night_image_data = imread([PathName FileName]);
 % Convert to double precision  for calculations.
 double_converted_starry_night_data = im2double(starry_night_image_data);
+% Save memory by removing useless Scheisse.
+clear FileName PathName;
 
 
 % Now I expand the noise to be binary to delete the noise pixels
@@ -68,6 +74,8 @@ integer_converted_noise_substracted_starry_night_rgb = im2uint8(noise_substracte
 [save_filename, save_path] = uiputfile({'*.jpg*', 'JPG' }, 'Save the starry night JPG');
 % Save it
 imwrite(integer_converted_noise_substracted_starry_night_rgb, [save_path save_filename], 'jpg');
+% Save memory by removing useless Scheisse.
+clear save_filename save_path;
 
 
 % ===========================================
@@ -104,14 +112,57 @@ for channel =  1:blacklight_number_of_channels
     % medianfilter.
     linearly_averaged_resultant_of_uv_image(:, :, channel) = medfilt2(linearly_averaged_resultant_of_uv_image(:, :, channel));
 end
-
-
 % Now I save the JPG
-
 % Tell user a message so that they know what is happening next.
 warning('Up next... save the averaged and filtered UV image as a JPG. Please choose a name!');
 [save_filename, save_path] = uiputfile({'*.jpg*', 'JPG' }, 'Save the averaged and filtered UV image JPG');
 % Save it
 imwrite(linearly_averaged_resultant_of_uv_image, [save_path save_filename], 'jpg');
+% Save memory by removing useless Scheisse.
+clear save_filename save_path;
 
+
+% Compare the two images!
+% I use a simple approach, that of using a mathematical divison between the values of both images to each other.
+
+% First, open the visible light image
+% Tell user a message so that they know what is happening next.
+warning('Navigate to load up the visible image');
+% Lets get the image from the user
+[FileName,PathName] = uigetfile('*','Open the visible light RGB JPG.');
+% Open it and store it in memory
+visible_light_image_data = imread([PathName FileName]);
+% Save memory by removing useless Scheisse.
+clear FileName PathName;
+% Obtain sizes of image
+[visible_image_rows, visible_image_columns, visible_image_number_of_channels] = size(visible_light_image_data);
+% I proceed to resize the UV image, I noticed that the aspect ratio is exactly the same for both images! 1.36
+resized_averaged_uv_light_image = imresize(linearly_averaged_resultant_of_uv_image, [visible_image_rows NaN]);
+% The image is not really badly damaged in terms of noise so just apply a simple median filter.
+for channel = 1:visible_image_number_of_channels
+    resized_averaged_uv_light_image(:, :, channel) = medfilt2(resized_averaged_uv_light_image(:, :, channel));
+end
+% Convert to double precisions both images
+double_resized_uv = im2double(resized_averaged_uv_light_image);
+double_resized_visible = im2double(visible_light_image_data);
+
+% Do a simple division for all the channels of the image
+% Store the results in an empty matrix.
+simple_division_uv_and_visible_results = zeros(visible_image_rows, visible_image_columns, visible_image_number_of_channels);
+for channel = 1:visible_image_number_of_channels
+    simple_division_uv_and_visible_results(:, :, channel) = double_resized_uv(:, :, channel) ./ double_resized_visible(:, :, channel);
+end
+
+% I apply a greyscale index operation to see if we can get anything useful.
+ratio_one = rgb2gray(double_resized_visible) - rgb2gray(double_resized_uv) ./ rgb2gray(double_resized_visible) + rgb2gray(double_resized_uv);
+ratio_two = rgb2gray(double_resized_uv) - rgb2gray(double_resized_visible) ./ rgb2gray(double_resized_uv) + rgb2gray(double_resized_visible);
+
+% Save the images as JPG, the ratios.
+% Tell user a message so that they know what is happening next.
+warning('Up next... save the ratios between the visible and UV. Please choose a name!');
+[save_filename, save_path] = uiputfile({'*.jpg*', 'JPG' }, 'Save the ratios between the visible and UV image JPG');
+% Save it
+imwrite(im2uint8(ratio_one), [save_path save_filename], 'jpg');
+% Save memory by removing useless Scheisse.
+clear save_filename save_path;
 
