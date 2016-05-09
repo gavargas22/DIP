@@ -32,7 +32,36 @@ double_converted_blacklight_image_data = im2double(grayscale_blacklight_image_da
 % of the noise.
 % =========================
 % Create the filter.
-default_laplacian_filter = fspecial('laplacian');
+default_laplacian_filter = fspecial('laplacian', 0.1);
 % Apply filter to the red channel of the original image.
-blacklight = imfilter(double_converted_blacklight_image_data(:, :, 1), default_laplacian_filter, 'replicate');
-% I get an image with mostly the noise.
+blacklight_filter_out = imfilter(double_converted_blacklight_image_data, default_laplacian_filter, 'replicate');
+% I get an image with mostly the noise
+% ========
+% Now I apply a dilation operation to make the noise more clear.
+dilation_structural_element = strel('square', 3);
+dilated_noise_result = imdilate(blacklight_filter_out, dilation_structural_element);
+% Convert the data into uint8 for image saving and other processing
+integer_dilated_filter_result_image = im2uint8(dilated_noise_result);
+[save_filename, save_path] = uiputfile({'*.jpg*', 'JPG' }, 'Save Noise Only Image');
+% Save it
+imwrite(integer_dilated_filter_result_image, [save_path save_filename], 'jpg');
+
+% I now open the star only image to apply noise cleansing to it.
+[FileName, PathName] = uigetfile('*','Select the starry night image file.');
+% Store the data in a matrix.
+starry_night_image_data = imread([PathName FileName]);
+% Convert to double precision  for calculations.
+double_converted_starry_night_data = im2double(starry_night_image_data);
+
+
+% Now I expand the noise to be binary to delete the noise pixels
+binary_noise_result = im2bw(dilated_noise_result, 0.35);
+% Convert binary to uint8 to remove the noise from the RGB image.
+
+% I start with the starry night image
+% I create an empty matrix with n channels to store the substraction in RGB
+noise_substracted_starry_night_rgb = zeros(blacklight_image_rows, blacklight_image_columns, blacklight_number_of_channels);
+% Substract the noise out of the starry night image channel by channel.
+for channel = 1:blacklight_number_of_channels
+    noise_substracted_starry_night_rgb = starry_night_image_data(:, :, channel) - binary_noise_result;
+end
