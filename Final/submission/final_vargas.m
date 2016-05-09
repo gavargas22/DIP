@@ -138,10 +138,20 @@ clear FileName PathName;
 [visible_image_rows, visible_image_columns, visible_image_number_of_channels] = size(visible_light_image_data);
 % I proceed to resize the UV image, I noticed that the aspect ratio is exactly the same for both images! 1.36
 resized_averaged_uv_light_image = imresize(linearly_averaged_resultant_of_uv_image, [visible_image_rows NaN]);
+
+
 % The image is not really badly damaged in terms of noise so just apply a simple median filter.
 for channel = 1:visible_image_number_of_channels
-    resized_averaged_uv_light_image(:, :, channel) = medfilt2(resized_averaged_uv_light_image(:, :, channel));
+    visible_light_image_data(:, :, channel) = medfilt2(visible_light_image_data(:, :, channel));
 end
+% Save the median filtered visible image as JPG.
+warning('Up next... save the visible median filtered image. Please choose a name!');
+[save_filename, save_path] = uiputfile({'*.jpg*', 'JPG' }, 'Save the visible median filtered image JPG');
+imwrite(visible_light_image_data, [save_path save_filename], 'jpg');
+% Clear memory
+clear save_filename save_path;
+
+
 % Convert to double precisions both images
 double_resized_uv = im2double(resized_averaged_uv_light_image);
 double_resized_visible = im2double(visible_light_image_data);
@@ -150,10 +160,9 @@ double_resized_visible = im2double(visible_light_image_data);
 % Store the results in an empty matrix.
 simple_division_uv_and_visible_results = zeros(visible_image_rows, visible_image_columns, visible_image_number_of_channels);
 for channel = 1:visible_image_number_of_channels
-    simple_division_uv_and_visible_results(:, :, channel) = double_resized_uv(:, :, channel) ./ double_resized_visible(:, :, channel);
+    simple_division_uv_and_visible_results(:, :, channel) = double_resized_uv(:, :, channel) - double_resized_visible(:, :, channel) ./ double_resized_visible(:, :, channel) + double_resized_uv(:, :, channel);
 end
-
-% I apply a greyscale index operation to see if we can get anything useful.
+% I apply also greyscale index operations to see if we can get anything useful.
 ratio_one = rgb2gray(double_resized_visible) - rgb2gray(double_resized_uv) ./ rgb2gray(double_resized_visible) + rgb2gray(double_resized_uv);
 ratio_two = rgb2gray(double_resized_uv) - rgb2gray(double_resized_visible) ./ rgb2gray(double_resized_uv) + rgb2gray(double_resized_visible);
 
@@ -161,8 +170,12 @@ ratio_two = rgb2gray(double_resized_uv) - rgb2gray(double_resized_visible) ./ rg
 % Tell user a message so that they know what is happening next.
 warning('Up next... save the ratios between the visible and UV. Please choose a name!');
 [save_filename, save_path] = uiputfile({'*.jpg*', 'JPG' }, 'Save the ratios between the visible and UV image JPG');
-% Save it
+% Save all the ratios, the rgb and greyscale!
 imwrite(im2uint8(ratio_one), [save_path save_filename], 'jpg');
+imwrite(im2uint8(ratio_two), [save_path 'ratio_two.jpg'], 'jpg');
+imwrite(im2uint8(simple_division_uv_and_visible_results), [save_path 'ratio_rgb.jpg'], 'jpg');
 % Save memory by removing useless Scheisse.
 clear save_filename save_path;
+
+% Take a look at the RGB ratio, it looks pretty interesting!
 
